@@ -2,17 +2,19 @@
   <div
     class="cell" 
     :class="cellType"
-    @mouseenter="setValue"
     @click="selectPoint"
+    :style="style"
   >
     <div>
-      {{row}},{{col}}
+      {{f}}
     </div>
-    <div>{{value}}</div>
+    <div>{{h}},{{g}}</div>
   </div>
 </template>
 
 <script>
+import { generateColor } from '../util/Color'
+
 export default {
   props: {
     row: {
@@ -34,14 +36,20 @@ export default {
     selecting: {
       type: Boolean,
       default: false
+    },
+    node: {
+      type: Object
+    },
+    isStart: {
+      type: Boolean,
+      default: false
+    },
+    isEnd: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
-    setValue () {
-      if (this.value === 0 && this.active) {
-        this.$emit('setgridvalue', this.row, this.col, -1)
-      }
-    },
     selectPoint () {
       if (this.selecting) {
         this.$emit('selectpoint', this.row, this.col)
@@ -50,7 +58,48 @@ export default {
   },
   computed: {
     cellType () {
-      return ['obstacle', '', 'start', 'end'][this.value + 1]
+      if (this.isStart) {
+        return 'start'
+      }
+
+      if (this.isEnd) {
+        return 'end'
+      }
+
+      if (this.node && this.node.isPath) {
+        return 'path'
+      }
+
+      if (this.node && this.node.open) {
+        return 'open'
+      }
+
+      if (this.node && this.node.closed) {
+        return 'closed'
+      }
+
+      if (this.node && this.node.isObstacle()) {
+        return 'obstacle'
+      }
+      
+      return ''
+    },
+    g () {
+      return  this.node.g  >= 100000 ? 'inf' : this.node.g
+    },
+    h () {
+      return this.node.h
+    },
+    f () {
+      return this.node.f  >= 100000 ? 'inf' : this.node.f
+    },
+    style () {
+      if (this.node.closed && !this.node.isPath && !this.isStart) {
+        return {
+          background: generateColor('#00fa9a', '#aa53dd', this.g)
+        }
+      }
+      return null
     }
   }
 }
@@ -63,19 +112,31 @@ export default {
     height: 30px;
     box-sizing: border-box;
     border: 1px solid gray;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .obstacle {
-    background: palegoldenrod;
+    background: lightslategray;
   }
 
   .start {
     background: palegreen;
+    color: yelow
+  }
+
+  .path {
+    background: paleturquoise;
   }
 
   .end {
     background: palevioletred;
   }
 
+  .open {
+    background: #ff00ff80;
+  }
+
+  .closed {
+    background: #affa00;
+  }
 </style>

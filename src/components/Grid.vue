@@ -152,7 +152,7 @@ export default {
   user-select: none;
 }
 .row {
-  width: calc(20 * 30 px);
+  width: calc(20 * 30px);
   position: relative;
   display: flex;
   flex-direction: row;

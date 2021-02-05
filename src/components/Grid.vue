@@ -1,9 +1,15 @@
 <template>
   <div class="grid-wapper">
     <div class="toolbox">
-      <button @click="activateSource" class="button" :disabled="selecting">Select Start/End</button> | 
-      <button @click="resetGrid" class="button" >Reset Grid</button> | 
-      <button @click="astarSearch" class="button" :disabled="!isReady">Search</button>
+      <el-button @click="activateSource" class="button" :disabled="selecting">Select Start/End</el-button> 
+      <el-button @click="resetGrid" class="button" >Reset Grid</el-button> 
+      <el-button @click="astarSearch" class="button" :disabled="!isReady">Search</el-button> 
+      <el-switch
+        v-model="diagonal"
+        active-text="Enable Diagonal"
+        class="switch"
+      >
+      </el-switch>
     </div>
     <div
       ref="grid"
@@ -35,9 +41,8 @@
 </template>
 
 <script>
-const N = 20
-const UNIT = 30
-const DIAGONAL = true
+const N = 18
+const UNIT = 32
 
 import Cell from '../components/Cell'
 import Graph from '../util/Graph'
@@ -51,14 +56,15 @@ export default {
       width: N,
       height: N,
       active: false,
-      srcAndDes: [null, null]
+      srcAndDes: [null, null],
+      diagonal: false
     }
   },
   methods: {
     initGraph () {
       // init graph from this.grid and grid's dimensions N * N
       const matrix = new Array(N).fill(0).map(() => new Array(N).fill(1))
-      const graph = new Graph(matrix, { diagonal : DIAGONAL })
+      const graph = new Graph(matrix, { diagonal: this.diagonal })
       window.graph = graph
       return graph
     },
@@ -77,11 +83,12 @@ export default {
     },
     selectPoint (row, col) {
       const node = this.grid.getNode(row, col)
-      node.reset()
       // selecting of start and end has high priority
       if (this.selecting) {
+        node.reset()
         this.srcAndDes.push(node)
       } else {
+        node.partialReset()
         node.weight *= -1
       }
     },
@@ -122,11 +129,12 @@ export default {
         const row = ~~(y / UNIT)
         const col = ~~(x / UNIT)
         const node = this.grid.getNode(row, col)
-        if (node.weight > 0) {
+        if (node && node.weight > 0) {
+          node.reset()
           node.weight *= -1
         }
       }
-    }
+    },
   },
   computed:{
     selecting () {
@@ -134,6 +142,13 @@ export default {
     },
     isReady () {
       return this.srcAndDes.length === 2 && this.srcAndDes[1]
+    }
+  },
+  watch: {
+    diagonal (newVal) {
+      if (this.grid) {
+        this.grid.diagonal = newVal
+      }
     }
   },
   components: {
@@ -155,22 +170,27 @@ export default {
 .grid {
   position: relative;
   display: inline-block;
-  border: 1px solid black;
+  border: 1px solid gray;
   cursor: default;
   user-select: none;
+  box-shadow: 2px 2px 7px rgb(0 0 0 / 30%);
 }
 .row {
-  width: calc(20 * 30px);
+  width: calc(18 * 32px);
   position: relative;
   display: flex;
   flex-direction: row;
 }
 .col {
   position: relative;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   box-sizing: border-box;
   border: 1px solid gray;
   font-size: 12px;
+}
+
+.button, .switch {
+  padding: 7px 8px;
 }
 </style>

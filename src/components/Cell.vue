@@ -5,10 +5,13 @@
     :style="style"
     @click="selectPoint"
   >
-    <div>
-      {{f}}
+    <div class="first-line">
+      <div>{{f}}</div>
     </div>
-    <div>{{h}},{{g}}</div>
+    <div class="second-line">
+      <div>{{h}}</div>
+      <div>{{g}}</div>
+    </div>
   </div>
 </template>
 
@@ -85,22 +88,20 @@ export default {
       return ''
     },
     g () {
-      return  this.node.g  >= 100000 ? 'inf' : ~~this.node.g
+      let value = Math.round(this.node.g)
+      return value  >= 100000 ? 'inf' : value
     },
     h () {
-      return ~~this.node.h
+      return Math.round(this.node.h)
     },
     f () {
-      let value = this.node.f
-      if (value !== ~~value) {
-        value = value.toFixed(1)
-      }
+      let value = Math.round(this.node.f)
       return value  >= 100000 ? 'inf' : value
     },
     style () {
       if (this.node.closed && !this.node.isPath && !this.isStart) {
         return {
-          background: generateColor('#00fa9a', '#aa53dd', this.g)
+          background: generateColor('#2fcbac', '#aa53dd', this.g)
         }
       }
       return null
@@ -112,11 +113,11 @@ export default {
 <style scoped>
   .cell {
     position: relative;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     box-sizing: border-box;
     border: 1px solid gray;
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .obstacle {
@@ -125,7 +126,7 @@ export default {
 
   .start {
     background: palegreen;
-    color: yelow
+    color: yelow;
   }
 
   .path {
@@ -142,5 +143,35 @@ export default {
 
   .closed {
     background: #affa00;
+  }
+
+  .first-line, .second-line {
+    position: relative;
+    width: 100%;
+    height: 50%;
+    padding: 1px;
+    box-sizing: border-box;
+  }
+
+  .first-line {
+    font-size: 12px;
+  }
+
+  .second-line {
+    font-size: 10px;
+    display: flex;
+  }
+
+  .first-line > div, .second-line > div {
+    position: relative;
+    text-align: left;
+    line-height: 14px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .second-line > div {
+    width: 50%;
+    box-sizing: border-box;
   }
 </style>

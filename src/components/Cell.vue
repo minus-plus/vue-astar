@@ -2,8 +2,8 @@
   <div
     class="cell" 
     :class="cellType"
-    @click="selectPoint"
     :style="style"
+    @click="selectPoint"
   >
     <div>
       {{f}}
@@ -50,10 +50,10 @@ export default {
     }
   },
   methods: {
-    selectPoint () {
-      if (this.selecting) {
-        this.$emit('selectpoint', this.row, this.col)
-      }
+    selectPoint (e) {
+      e.preventDefault()
+      e.stopPropagation()
+      this.$emit('selectpoint', this.row, this.col)
     }
   },
   computed: {
@@ -64,6 +64,10 @@ export default {
 
       if (this.isEnd) {
         return 'end'
+      }
+
+      if (this.node && this.node.isObstacle()) {
+        return 'obstacle'
       }
 
       if (this.node && this.node.isPath) {
@@ -78,20 +82,20 @@ export default {
         return 'closed'
       }
 
-      if (this.node && this.node.isObstacle()) {
-        return 'obstacle'
-      }
-      
       return ''
     },
     g () {
-      return  this.node.g  >= 100000 ? 'inf' : this.node.g
+      return  this.node.g  >= 100000 ? 'inf' : ~~this.node.g
     },
     h () {
-      return this.node.h
+      return ~~this.node.h
     },
     f () {
-      return this.node.f  >= 100000 ? 'inf' : this.node.f
+      let value = this.node.f
+      if (value !== ~~value) {
+        value = value.toFixed(1)
+      }
+      return value  >= 100000 ? 'inf' : value
     },
     style () {
       if (this.node.closed && !this.node.isPath && !this.isStart) {

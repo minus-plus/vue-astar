@@ -1,7 +1,7 @@
 // util/Astar.js
 import Heap from './Heap'
 import { wait } from './Util'
-const WAIT = 20
+const WAIT = 5
 
 class Astar {
 
@@ -44,6 +44,7 @@ class Astar {
           neighbor.h = heuristic(neighbor, end)
           neighbor.f = neighbor.g + neighbor.h
           // if neighbor not in openList, add it
+          await wait(WAIT)
           if (!visited) {
             // expand this neighbor
             openList.offer(neighbor)
@@ -54,7 +55,7 @@ class Astar {
           }
         }
       }
-      await wait(WAIT)
+      // await wait(WAIT)
     }
     // can not reach the goal
     return []
@@ -62,23 +63,6 @@ class Astar {
 
   static manhattan(p1, p2) {
     return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y)
-  }
-
-  static diagonal(p1, p2) {
-    let D = 1
-    let D2 = Math.sqrt(2)
-    let d1 = Math.abs(p2.x - p1.x)
-    let d2 = Math.abs(p2.y - p1.y)
-    return (D * (d1 + d2)) + ((D2 - (2 * D)) * Math.min(d1, d2))
-  }
-
-  static cleanNode(node) {
-    node.g = 100000
-    node.h = 0
-    node.f = this.g + this.h
-    node.visited = false
-    node.closed = false
-    node.parant = null
   }
 
   static getPath(node) {

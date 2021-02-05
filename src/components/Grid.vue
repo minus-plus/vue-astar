@@ -37,6 +37,7 @@
 <script>
 const N = 20
 const UNIT = 30
+const DIAGONAL = true
 
 import Cell from '../components/Cell'
 import Graph from '../util/Graph'
@@ -57,7 +58,7 @@ export default {
     initGraph () {
       // init graph from this.grid and grid's dimensions N * N
       const matrix = new Array(N).fill(0).map(() => new Array(N).fill(1))
-      const graph = new Graph(matrix)
+      const graph = new Graph(matrix, { diagonal : DIAGONAL })
       window.graph = graph
       return graph
     },
@@ -76,7 +77,13 @@ export default {
     },
     selectPoint (row, col) {
       const node = this.grid.getNode(row, col)
-      this.srcAndDes.push(node)
+      node.reset()
+      // selecting of start and end has high priority
+      if (this.selecting) {
+        this.srcAndDes.push(node)
+      } else {
+        node.weight *= -1
+      }
     },
     activateSource () {
       this.srcAndDes.splice(0, 2)
@@ -114,8 +121,9 @@ export default {
         const y = e.clientY - rect.top
         const row = ~~(y / UNIT)
         const col = ~~(x / UNIT)
-        if (this.grid.getNode(row, col).weight === 1) {
-          this.setGridValue(row, col, -1)
+        const node = this.grid.getNode(row, col)
+        if (node.weight > 0) {
+          node.weight *= -1
         }
       }
     }

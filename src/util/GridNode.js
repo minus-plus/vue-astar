@@ -21,7 +21,7 @@ class GridNode {
   }
 
   isObstacle () {
-    return this.weight === -1
+    return this.weight < 0
   }
 
   reset () {

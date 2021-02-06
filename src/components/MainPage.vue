@@ -19,6 +19,7 @@
           </div>
           <p>g: distance from source</p>
           <p>h: heuristic distance to goal</p>
+          <p>f = g + h</p>
         </div>
         <br />
         <div class="item">
@@ -48,7 +49,7 @@
           <p>Click Select Start/End to set start and end position</p>
           <p>Click Search to execute A-Star alghorithm</p>
           <p>Click Reset to clean the grid</p>
-          <p>Hold left mouse button and move it in grid to set obstacles</p>
+          <p>Hold left mouse button and move cursor in grid to set obstacles</p>
         </div>
       </div>
     </div>
@@ -104,7 +105,7 @@ export default {
 
 .first-line > div, .second-line > div {
   width: 50%;
-  line-height: 23px;
+  line-height: 20px;
   text-align: center;
 }
 
@@ -138,5 +139,9 @@ export default {
 
 .obstacle {
   background: lightslategray;
+}
+
+.instruction p {
+  margin: 0.5em 0;
 }
 </style>

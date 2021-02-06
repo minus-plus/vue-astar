@@ -1,15 +1,15 @@
 <template>
   <div class="grid-wapper">
     <div class="toolbox">
-      <el-button @click="activateSource" class="button" :disabled="selecting">Select Start/End</el-button> 
-      <el-button @click="resetGrid" class="button" >Reset Grid</el-button> 
-      <el-button @click="astarSearch" class="button" :disabled="!isReady">Search</el-button> 
+      <el-button @click="activateSource" class="button" :disabled="selecting || searching">Select Start/End</el-button> 
+      <el-button @click="astarSearch" class="button" :disabled="!isReady || searching">Search</el-button> 
       <el-switch
         v-model="diagonal"
         active-text="Enable Diagonal"
         class="switch"
       >
       </el-switch>
+      <el-button @click="resetGrid" class="button" :disabled="searching">Reset Grid</el-button> 
     </div>
     <div
       ref="grid"
@@ -57,7 +57,8 @@ export default {
       height: N,
       active: false,
       srcAndDes: [null, null],
-      diagonal: false
+      diagonal: false,
+      searching: false
     }
   },
   methods: {
@@ -112,11 +113,13 @@ export default {
         const end = this.grid.getNode(this.srcAndDes[1].x, this.srcAndDes[1].y)
         // reset search info in each grid, g, h, f, parent, open and closed ...
         this.grid.partialReset()
+        this.searching = true
         const path = await Astar.search(this.grid, start, end)
         // render path
         path.forEach(node => {
           node.isPath = true
         })
+        this.searching = false
       }
     },
     onMouseMove (e) {

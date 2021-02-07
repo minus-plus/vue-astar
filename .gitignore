@@ -2,6 +2,7 @@
 node_modules
 /dist
 .vscode
+deploy.sh
 
 
 # local env files

@@ -5,7 +5,7 @@ const WAIT = 5
 
 class Astar {
 
-  static async search(graph, start, end, options = {}) {
+  static async search (graph, start, end, options = {}) {
     const heuristic = options.heuristic || this.manhattan
     let openList = new Heap((node1, node2) => {
       if (node1.f !== node2.f) {
@@ -61,11 +61,11 @@ class Astar {
     return []
   }
 
-  static manhattan(p1, p2) {
+  static manhattan (p1, p2) {
     return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y)
   }
 
-  static getPath(node) {
+  static getPath (node) {
     let curr = node
     let path = []
     while (curr) {

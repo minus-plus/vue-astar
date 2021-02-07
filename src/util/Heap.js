@@ -32,14 +32,17 @@ class Heap {
   }
 
   peek () {
-    return this.list[0]
+    if (this.list.length > 0) {
+      return this.list[0]
+    }
+    return null
   }
 
   bubbleUp (index) {
     const element = this.list[index]
 
     while (index > 0) {
-      const parentIndex = ((index -1) >> 1)
+      const parentIndex = ((index - 1) >> 1)
       const parent = this.list[parentIndex]
       if (this.cmp(element, parent) < 0) {
         this.list[index] = parent
